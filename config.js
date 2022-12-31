@@ -18,14 +18,14 @@ global.vcardowner = ['918547659493'] //ganti nomer lu
 global.ownername = "𝙳𝙾𝙲𝚃𝙾𝚁 𝙼𝙰𝚂𝚂" //ganti nama lu
 global.developer = "𝙰𝙻𝙿𝙷𝙰" //name
 global.ytname = "YT: 𝙱𝚁𝙲 𝚂𝚃𝚁𝙰𝙽𝙶𝙴" //ur yt chanel name
-global.socialm = "https://www.instagram.com/aswin_sparky.exe" //taroh sosialmedia lu kalo ga punya biarin aja
+global.socialm = "https://www.instagram.com/dark_hacker_2004/.exe" //taroh sosialmedia lu kalo ga punya biarin aja
 global.sgc = "https://chat.whatsapp.com/JTUrdnOziKD44ScoBoggmh" //ganti group lu
 global.location = "Kerala,TVM,Varkala" //ganti lokasi lu
 
 //bot bomdy 
 global.owner = ['918547659493'] //ur number
 global.ownernomer = "918547659493" //ur number
-global.ownertag = '917012984396' //ur tag number
+global.ownertag = '918547659493' //ur tag number
 global.premium = ['917012984396'] //ur premium number
 global.botname = '𝚂𝚃𝚁𝙰𝙽𝙶𝙴 𝙱𝙾𝚃' //ur bot name
 global.ownername = "A𝙻𝙿𝙷𝙰"
@@ -36,8 +36,8 @@ global.websitex = "https://youtube.com/@sparkymon777" //ur website to be display
 global.websitex1 = "https://sparkymodswa.blogspot.com"
 global.botscript = 'https://github.com/Sparkymon777/SPARKY-BOT-MD' //script link
 global.themeemoji = "👀" //ur theme emoji
-global.packname = "S P A R K Y" //ur sticker watermark packname
-global.author = "ASWIN" //ur sticker watermark author
+global.packname = "𝚂 𝚃 𝚁 𝙰 𝙽 𝙶 𝙴" //ur sticker watermark packname
+global.author = "A𝙻𝙿𝙷𝙰" //ur sticker watermark author
 global.wm = "𝚂 𝚃 𝚁 𝙰 𝙽 𝙶 𝙴" //ur watermark
 
 // Other
