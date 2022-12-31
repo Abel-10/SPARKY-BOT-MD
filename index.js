@@ -1,6 +1,6 @@
-require('./config')
+require('./settings')
 const { default: XeonBotIncConnect, useSingleFileAuthState, DisconnectReason, fetchLatestBaileysVersion, generateForwardMessageContent, prepareWAMessageMedia, generateWAMessageFromContent, generateMessageID, downloadContentFromMessage, makeInMemoryStore, jidDecode, proto } = require("@adiwajshing/baileys")
-const { state, saveState } = useSingleFileAuthState(`./${sessionName}.json`)
+const { state, saveState } = useSingleFileAuthState(`${sessionName}.json`)
 const pino = require('pino')
 const { Boom } = require('@hapi/boom')
 const fs = require('fs')
@@ -13,8 +13,11 @@ const axios = require('axios')
 const PhoneNumber = require('awesome-phonenumber')
 const { imageToWebp, videoToWebp, writeExifImg, writeExifVid } = require('./lib/exif')
 const { smsg, isUrl, generateMessageTag, getBuffer, getSizeMedia, fetchJson, await, sleep } = require('./lib/myfunc')
+const { TelegraPh } = require('./lib/uploader')
 const moment = require('moment-timezone')
-
+const getRandom = (ext) => {
+	return `${Math.floor(Math.random() * 10000)}${ext}`
+}
 var low
 try {
   low = require('lowdb')
@@ -36,7 +39,7 @@ global.db = new Low(
       new mongoDB(opts['db']) :
       new JSONFile(`src/database.json`)
 )
-global.DATABASE = global.db // Backwards Compatibility
+global.DATABASE = global.db
 global.loadDatabase = async function loadDatabase() {
   if (global.db.READ) return new Promise((resolve) => setInterval(function () { (!global.db.READ ? (clearInterval(this), resolve(global.db.data == null ? global.loadDatabase() : global.db.data)) : null) }, 1 * 1000))
   if (global.db.data !== null) return
@@ -57,6 +60,8 @@ global.loadDatabase = async function loadDatabase() {
 }
 loadDatabase()
 
+process.on('uncaughtException', console.error)
+
 // save database every 30seconds
 if (global.db) setInterval(async () => {
     if (global.db.data) await global.db.write()
@@ -66,8 +71,21 @@ async function startXeonBotInc() {
     const XeonBotInc = XeonBotIncConnect({
         logger: pino({ level: 'silent' }),
         printQRInTerminal: true,
-        browser: ['SPARKY MD+','Safari','1.0.0'],
+        browser: ['Cheems Bot MD','Safari','1.0.0'],
         auth: state
+    })
+
+    store.bind(XeonBotInc.ev)
+    
+    // anticall auto block
+    XeonBotInc.ws.on('CB:call', async (json) => {
+    const callerId = json.content[0].attrs['call-creator']
+    if (json.content[0].tag == 'offer') {
+    let blockxeon = await XeonBotInc.sendContact(callerId, global.owner)
+    XeonBotInc.sendMessage(callerId, { text: `*Automatic blocking system!*\n*Don't call bot*!\n*Please contact the owner to open block !*`}, { quoted : blockxeon })
+    await sleep(8000)
+    await XeonBotInc.updateBlockStatus(callerId, "block")
+    }
     })
 
     XeonBotInc.ev.on('messages.upsert', async chatUpdate => {
@@ -80,9 +98,9 @@ async function startXeonBotInc() {
         if (!XeonBotInc.public && !mek.key.fromMe && chatUpdate.type === 'notify') return
         if (mek.key.id.startsWith('BAE5') && mek.key.id.length === 16) return
         m = smsg(XeonBotInc, mek, store)
-        require("./sparky")(XeonBotInc, m, chatUpdate, store)
-        } catch (err) {
-            console.log(err)
+        require("./XeonCheems6")(XeonBotInc, m, chatUpdate, store)
+        } catch (e) {
+            console.log(e)
         }
     })
     
@@ -93,7 +111,7 @@ async function startXeonBotInc() {
        try {
        ppgc = await XeonBotInc.profilePictureUrl(pea[0].id, 'image')
        } catch {
-       ppgc = 'https://shortlink.hisokaarridho.my.id/rg1oT'
+       ppgc = 'https://i.ibb.co/RBx5SQC/avatar-group-large-v2.png'
        }
        let lolXeon = { url : ppgc }
        if (pea[0].announce == true) {
@@ -109,7 +127,7 @@ async function startXeonBotInc() {
      }
     })
     
-        //randoming function
+    //randoming function
 function pickRandom(list) {
 return list[Math.floor(list.length * Math.random())]
 }
@@ -127,25 +145,110 @@ let docs = pickRandom(documents)
                 try {
                     ppuser = await XeonBotInc.profilePictureUrl(num, 'image')
                 } catch {
-                    ppuser = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+                    ppuser = 'https://i.ibb.co/sbqvDMw/avatar-contact-large-v2.png'
                 }
 
                 // Get Profile Picture Group
                 try {
-                    ppgroup = await XeonBotInc.profilePictureUrl(anu.id, 'image')
+                    ppgroup = await zass.profilePictureUrl(anu.id, 'image')
                 } catch {
-                    ppgroup = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+                    ppgroup = 'https://i.ibb.co/RBx5SQC/avatar-group-large-v2.png'
                 }
-
-
+                
+                //welcome\\
+        let nama = await XeonBotInc.getName(num)
+memb = metadata.participants.length
+XeonWlcm = await getBuffer(ppuser)
+XeonLft = await getBuffer(ppuser)
+                if (anu.action == 'add') {
+                const xeonbuffer = await getBuffer(ppuser)
+                let xeonName = num
+                const xtime = moment.tz('Asia/Kolkata').format('HH:mm:ss')
+	            const xdate = moment.tz('Asia/Kolkata').format('DD/MM/YYYY')
+	            const xmembers = metadata.participants.length
+                let unicorndoc = {key: {fromMe: false,"participant":"0@s.whatsapp.net", "remoteJid": "916909137213-1604595598@g.us"}, "message": {orderMessage: {itemCount: 9999999,status: 200, thumbnail: XeonWlcm, surface: 200, message: `${metadata.subject}`, orderTitle: 'xeon', sellerJid: '0@s.whatsapp.net'}}, contextInfo: {"forwardingScore":999,"isForwarded":true},sendEphemeral: true}
+                xeonbody = `┌─❖
+│「 𝗛𝗶 👋 」
+└┬❖ 「 @${xeonName.split("@")[0]}  」
+   │✑  𝗪𝗲𝗹𝗰𝗼𝗺𝗲 𝘁𝗼 
+   │✑  ${metadata.subject}
+   │✑  𝗠𝗲𝗺𝗯𝗲𝗿 : 
+   │✑ ${xmembers}th
+   │✑  𝗝𝗼𝗶𝗻𝗲𝗱 : 
+   │✑ ${xtime} ${xdate}
+   └───────────────┈ ⳹`
+let buttons = [
+{buttonId: `wkwwk`, buttonText: {displayText: 'Welcome 💐'}, type: 1}
+]
+let buttonMessage = {
+document: fs.readFileSync('./XeonMedia/theme/cheems.xlsx'),
+mimetype: docs,
+jpegThumbnail:XeonWlcm,
+mentions: [num],
+fileName: `${metadata.subject}`,
+fileLength: 99999999999999,
+caption: xeonbody,
+footer: `${botname}`,
+buttons: buttons,
+headerType: 4,
+contextInfo:{externalAdReply:{
+title: `${ownername}`,
+body: `Don't forget to read group description`,
+mediaType:2,
+thumbnail: XeonWlcm,
+sourceUrl: `${websitex}`,
+mediaUrl: `${websitex}`
+}}
+}
 XeonBotInc.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
+                } else if (anu.action == 'remove') {
+                	const xeonbuffer = await getBuffer(ppuser)
+                    const xeontime = moment.tz('Asia/Kolkata').format('HH:mm:ss')
+	                const xeondate = moment.tz('Asia/Kolkata').format('DD/MM/YYYY')
+                	let xeonName = num
+                    const xeonmembers = metadata.participants.length
+                    let unicorndoc = {key: {fromMe: false,"participant":"0@s.whatsapp.net", "remoteJid": "916909137213-1604595598@g.us"}, "message": {orderMessage: {itemCount: 9999999,status: 200, thumbnail: xeonbuffer, surface: 200, message: `${metadata.subject}`, orderTitle: 'xeon', sellerJid: '0@s.whatsapp.net'}}, contextInfo: {"forwardingScore":999,"isForwarded":true},sendEphemeral: true}
+                    xeonbody = `┌─❖
+│「 𝗚𝗼𝗼𝗱𝗯𝘆𝗲 👋 」
+└┬❖ 「 @${xeonName.split("@")[0]}  」
+   │✑  𝗟𝗲𝗳𝘁 
+   │✑ ${metadata.subject}
+   │✑  𝗠𝗲𝗺𝗯𝗲𝗿 : 
+   │✑ ${xeonmembers}th
+   │✑  𝗧𝗶𝗺𝗲 : 
+   │✑  ${xeontime} ${xeondate}
+   └───────────────┈ ⳹`
+let buttons = [
+{buttonId: `wkwkwk`, buttonText: {displayText: 'Sayonara 🥀'}, type: 1}
+]
+let buttonMessage = {
+document: fs.readFileSync('./XeonMedia/theme/cheems.xlsx'),
+mimetype: docs,
+jpegThumbnail:XeonLft,
+mentions: [num],
+fileName: `${metadata.subject}`,
+fileLength: 99999999999999,
+caption: xeonbody,
+footer: `${botname}`,
+buttons: buttons,
+headerType: 4,
+contextInfo:{externalAdReply:{
+title: `${ownername}`,
+body: `Bye! my friend, take care.`,
+mediaType:2,
+thumbnail: XeonLft,
+sourceUrl: `${websitex}`,
+mediaUrl: `${websitex}`
+}}
+}
+XeonBotInc.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
+                             
                 }
             }
-        } catch (err) {
-            console.log(err)
+        } catch (e) {
+            console.log(e)
         }
     })
-	
     // Setting
     XeonBotInc.decodeJid = (jid) => {
         if (!jid) return jid
@@ -180,15 +283,15 @@ XeonBotInc.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
             return (withoutContact ? '' : v.name) || v.subject || v.verifiedName || PhoneNumber('+' + jid.replace('@s.whatsapp.net', '')).getNumber('international')
     }
     
-    XeonBotInc.sendContact = async (jid, kon, quoted = '', opts = {}) => {
+        XeonBotInc.sendContact = async (jid, kon, quoted = '', opts = {}) => {
 	let list = []
 	for (let i of kon) {
 	    list.push({
-	    	displayName: await XeonBotInc.getName(i + '@s.whatsapp.net'),
-	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await XeonBotInc.getName(i + '@s.whatsapp.net')}\nFN:${global.ownername}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${global.ytname}\nitem2.X-ABLabel:YouTube\nitem3.URL:${global.socialm}\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${global.location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
+	    	displayName: await XeonBotInc.getName(i),
+	    	vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await XeonBotInc.getName(i)}\nFN:${await XeonBotInc.getName(i)}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Click here to chat\nitem2.EMAIL;type=INTERNET:${ytname}\nitem2.X-ABLabel:YouTube\nitem3.URL:${socialm}\nitem3.X-ABLabel:GitHub\nitem4.ADR:;;${location};;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
 	    })
 	}
-	XeonBotInc.sendMessage(jid, { contacts: { displayName: `${list.length} Contact`, contacts: list }, ...opts }, { quoted })
+	XeonBotInc.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
     }
     
     XeonBotInc.setStatus = (status) => {
@@ -639,57 +742,7 @@ XeonBotInc.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
 
         return proto.WebMessageInfo.fromObject(copy)
     }
-    
-    /**
-    * Send Poll
-    */
-    XeonBotInc.sendPoll = async (jid, name = '', optiPoll, options = {}) => {
-                if (!Array.isArray(optiPoll[0]) && typeof optiPoll[0] === 'string') optiPoll = [optiPoll]
-                const pollMessage = {
-        name: name,
-        options: optiPoll.map(btn => ({
-                            optionName: !nullish(btn[0]) && btn[0] || ''
-                    })),
-                    selectableOptionsCount: 1
-        }
-                return XeonBotInc.relayMessage(jid, { pollCreationMessage: pollMessage }, { ...options });
-                }
-                
-    
-    //send file
-    XeonBotInc.sendFile = async (jid, path, filename = '', caption = '', quoted, ptt = false, options = {}) => {
-        let type = await XeonBotInc.getFile(path, true)
-        let { res, data: file, filename: pathFile } = type
-        if (res && res.status !== 200 || file.length <= 65536) {
-            try { throw { json: JSON.parse(file.toString()) } }
-            catch (e) { if (e.json) throw e.json }
-        }
-        let opt = { filename }
-        if (quoted) opt.quoted = quoted
-        if (!type) if (options.asDocument) options.asDocument = true
-        let mtype = '', mimetype = type.mime
-        if (/webp/.test(type.mime)) mtype = 'sticker'
-        else if (/image/.test(type.mime)) mtype = 'image'
-        else if (/video/.test(type.mime)) mtype = 'video'
-        else if (/audio/.test(type.mime)) (
-            convert = await (ptt ? toPTT : toAudio)(file, type.ext),
-            file = convert.data,
-            pathFile = convert.filename,
-            mtype = 'audio',
-            mimetype = 'audio/ogg; codecs=opus'
-        )
-        else mtype = 'document'
-        return await XeonBotInc.sendMessage(jid, {
-            ...options,
-            caption,
-            ptt,
-            [mtype]: { url: pathFile },
-            mimetype
-        }, {
-            ...opt,
-            ...options
-        })
-    }
+
 
     /**
      * 
@@ -704,7 +757,7 @@ XeonBotInc.sendMessage(anu.id, buttonMessage, {quoted:unicorndoc})
             mime: 'application/octet-stream',
             ext: '.bin'
         }
-        filename = path.join(__filename, '../src/' + new Date * 1 + '.' + type.ext)
+        filename = path.join(__filename, './src/' + new Date * 1 + '.' + type.ext)
         if (data && save) fs.promises.writeFile(filename, data)
         return {
             res,
