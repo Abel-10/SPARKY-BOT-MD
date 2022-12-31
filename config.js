@@ -42,7 +42,7 @@ global.wm = "𝚂 𝚃 𝚁 𝙰 𝙽 𝙶 𝙴" //ur watermark
 
 // Other
 global.sessionName = 'session'
-global.prefa = ['','!','.','#','&']
+global.prefa = ['!','.','#','&']
 global.sp = ''
 global.mess = {
     success: 'Done✓',
